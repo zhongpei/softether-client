@@ -14,6 +14,5 @@ RUN tar -xzvf /tmp/softether.tar.gz -C /opt/
 RUN cd /opt/vpnclient &&  make i_read_and_agree_the_license_agreement
 RUN apt-get install -y -q net-tools pppoeconf
 RUN apt-get install -y -q vim rsyslog
-RUN service rsyslog start
 
 #RUN apt-get purge -y -q --auto-remove gcc make wget

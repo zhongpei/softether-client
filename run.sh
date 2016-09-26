@@ -1,4 +1,5 @@
 #!/bin/bash
+service rsyslog start
 
 ./vpnclient start
 VPNCMD="./vpncmd localhost /CLIENT /CMD"
