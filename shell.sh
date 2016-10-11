@@ -3,8 +3,8 @@
 
 docker run -it --rm \
 -v "$PWD/run.sh:/opt/vpnclient/run.sh" \
--v "$PWD/dsl-provider:/etc/ppp/peers/dsl-provider" \
--v "$PWD/pap-secrets:/etc/ppp/pap-secrets"  \
+-v "$PWD/dsl-provider.tp:/etc/ppp/peers/dsl-provider.tp" \
+-v "$PWD/pap-secrets.tp:/etc/ppp/pap-secrets.tp"  \
 -v "$PWD/endpoints:/endpoints"  \
 --privileged \
 --cap-add=NET_ADMIN --device=/dev/ppp \

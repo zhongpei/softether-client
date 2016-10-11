@@ -11,7 +11,7 @@
 # MUST CHANGE: Uncomment the following line, replacing the user@provider.net
 # by the DSL user name given to your by your DSL provider.
 # (There should be a matching entry in /etc/ppp/pap-secrets with the password.)
-user "052310721680"
+user "{username}"
 
 # Use the pppoe program to send the ppp packets over the Ethernet link
 # This line should work fine if this computer is the only one accessing

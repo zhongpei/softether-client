@@ -39,8 +39,52 @@ def add_route(packetix_host):
         }
     )
 
+def writeconf(template,target,**kw):
 
-def init(args):
+    with open(template) as f:
+        data = f.read()
+        with open(target,"w+") as f:
+            f.write(data.format(**kw))
+            return True
+    return False
+
+def init_pppoe(args):
+    if args.get("--pppoe-username") is None:
+        logging.error("not have --pppoe-username")
+        return False
+    if args.get('--pppoe-password') is None:
+        logging.error("not have --pppoe-password")
+        return False
+    ok = writeconf("/etc/ppp/peers/dsl-provider.tp","/etc/ppp/peers/dsl-provider",username=args["--pppoe-username"])
+    if not ok:
+        logging.error("write conf /etc/ppp/peers/dsl-provider failed")
+    ok = writeconf("/etc/ppp/pap-secrets.tp","/etc/ppp/pap-secrets",username=args["--pppoe-username"],password=args['--pppoe-password'])
+    if not ok:
+        logging.error("write conf /etc/ppp/pap-secrets failed")
+
+    c = Commander()
+    rd, ed = c.command2("pon dsl-provider")
+    if len(ed) > 0:
+        logging.error("pon failed")
+        return False
+
+    ok,why = is_pppoe_conneced()
+    while not ok:
+        ok,why = is_pppoe_conneced()
+        if ok:
+            print ok,why
+
+def is_pppoe_conneced():
+    c = Commander()
+    rd, ed = c.command2("plog")
+    for l in rd.split("\n"):
+        index = l.find("local  IP address")
+        if index != -1:
+            ip =  l[index+len("local  IP address"):].strip()
+            return True,ip
+    return False,"error"
+
+def init_vpn(args):
     c = Commander()
     rd, ed = c.command2("service rsyslog start")
     if len(ed) > 0:
@@ -94,11 +138,12 @@ def init(args):
         return False
 
     ok,why = is_vpn_connected()
-    print ok,why
+    logging.info("vpn connect %s (%s)"%(ok,why))
     while not ok:
         time.sleep(1)
         ok,why = is_vpn_connected()
-        print ok,why
+        logging.info("vpn connect %s (%s)"%(ok,why))
+
 def is_vpn_connected():
     c = Commander()
     ok, rd, ed = c.vpn_command(
@@ -124,7 +169,7 @@ if __name__ == '__main__':
     args = docopt(__doc__)
     print args
 
-    ok = init(args)
-
+    ok = init_vpn(args)
+    ok = init_pppoe(args)
     if args['-r']:
         add_route(args['<host>'])

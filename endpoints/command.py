@@ -32,16 +32,17 @@ class Commander:
     def __kill(self, p):
         try:
             if p is None:
-                print ("pid is None")
+                #print ("pid is None")
                 return
-            print 'terminate ... '
+            #print 'terminate ... '
             p.terminate()
-            print 'kill ... '
+            #print 'kill ... '
             p.kill()
             if p in self.handles:
                 self.handles.remove(p)
         except Exception as err:
-            print err
+            pass
+            #print err
 
     def vpn_command(
             self,
