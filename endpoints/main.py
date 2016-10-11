@@ -167,7 +167,7 @@ def is_vpn_connected():
 
 if __name__ == '__main__':
     args = docopt(__doc__)
-    print args
+    #print args
 
     ok = init_vpn(args)
     ok = init_pppoe(args)

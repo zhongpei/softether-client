@@ -20,5 +20,6 @@ RUN pip install -r requestments.txt
 RUN mkdir -p /etc/ppp/peers/
 ADD pap-secrets.tp /etc/ppp/pap-secrets.tp
 ADD dsl-provider.tp /etc/ppp/peers/dsl-provider.tp
+ADD ./endpoints /endpoints
 #RUN apt-get purge -y -q --auto-remove gcc make wget
 CMD ["/usr/bin/python","/endpoints/main.py"]
