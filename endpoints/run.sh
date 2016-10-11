@@ -1,7 +1,10 @@
 #!/bin/bash
-service rsyslog start
 
+
+service rsyslog start
+sleep 1
 ./vpnclient start
+sleep 3
 VPNCMD="./vpncmd localhost /CLIENT /CMD"
 
 $VPNCMD NicCreate p1
