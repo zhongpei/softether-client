@@ -188,8 +188,8 @@ if __name__ == '__main__':
     args = docopt(__doc__)
     logging.basicConfig(
             level=logging.DEBUG,
-            format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-            datefmt='%a, %d %b %Y %H:%M:%S'
+            format='%(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
     )
     #print args
     if args.get("--env"):
