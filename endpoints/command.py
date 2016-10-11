@@ -8,7 +8,7 @@ import threading
 
 
 class Commander:
-    def __init__(self, vpn_cmd = "./vpncmd"):
+    def __init__(self, vpn_cmd = "/opt/vpnclient/vpncmd"):
         self.handles = []
         self.VPN_SUCESSED_RESULT = (
             "The command completed successfully",
@@ -55,7 +55,7 @@ class Commander:
         try:
             rd = ed = []
             is_ok = False
-            r, e = self.command2(command, timeout=60, env=None, cwd=cwd, shell=False)
+            r, e = self.command2("%s  localhost /CLIENT /CMD %s"%(VPNCMD,command), timeout=60, env=None, cwd=cwd, shell=False)
             rd = r.split("\n")
             re = r.split("\n")
             for l in rd:

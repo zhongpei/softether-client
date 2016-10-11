@@ -40,20 +40,20 @@ def add_route(packetix_host):
     )
 
 
-def init():
+def init(args):
     c = Commander()
     rd, ed = c.command2("service rsyslog start")
     if len(ed) > 0:
         logging.error("start rsyslog failed")
         return False
-    rd, ed = c.command2("./vpnclient start")
+    rd, ed = c.command2("/opt/vpnclient/vpnclient start")
     if len(ed) > 0:
         logging.error("start vpnclient failed")
         return False
 
     time.sleep(1)
 
-    ok, rd, ed = c.vpn_command(" localhost /CLIENT /CMD NicCreate p1")
+    ok, rd, ed = c.vpn_command("NicCreate p1")
     if not ok:
         logging.error("create nic failed")
         return False
@@ -62,13 +62,69 @@ def init():
     if 'vpn_p1' not in netifaces.interfaces():
         logging.error("create nic failed")
         return False
+    
+    ok, rd, ed = c.vpn_command(
+            "AccountCreate {username} /SERVER:{host}:{port} /HUB:VPN /USERNAME:{username} /NICNAME:p1".format(
+                username=args["<username>"],
+                host=args["<host>"],
+                port=15555,
+            )
+    )
+    if not ok:
+        logging.error("create account failed")
+        return False
+
+    ok, rd, ed = c.vpn_command(
+            "AccountPasswordSet {username} /PASSWORD:{password} /TYPE:standard".format(
+                username=args["<username>"],
+                password=args["<password>"],
+            )
+    )
+    if not ok:
+        logging.error("account set password failed")
+        return False
+
+    ok, rd, ed = c.vpn_command(
+            "AccountConnect {username} ".format(
+                username=args["<username>"],
+            )
+    )
+    if not ok:
+        logging.error("connect failed")
+        return False
+
+    ok,why = is_vpn_connected()
+    print ok,why
+    while not ok:
+        time.sleep(1)
+        ok,why = is_vpn_connected()
+        print ok,why
+def is_vpn_connected():
+    c = Commander()
+    ok, rd, ed = c.vpn_command(
+            "AccountStatusGet {username} ".format(
+                username=args["<username>"],
+            )
+    )
+    if not ok:
+        return False,"command not runing"
+    #print "\n".join(rd)
+    for l in rd:
+        if l.find("|") !=  -1:
+            key,value = l.split("|")
+            if key.find("Session Status") != -1 :
+                if value.find("Connection Completed (Session Established)") != -1:
+                    return True,value
+                else:
+                    return False,value
+    return False,"error"
 
 
 if __name__ == '__main__':
     args = docopt(__doc__)
     print args
 
-    ok = init()
+    ok = init(args)
 
     if args['-r']:
         add_route(args['<host>'])
