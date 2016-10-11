@@ -3,3 +3,5 @@ docopt
 flask-restful
 netifaces
 pyroute2
+docker-py
+Flask-WTF
